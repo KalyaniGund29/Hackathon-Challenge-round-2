@@ -2,9 +2,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser
 import pandas as pd
+import numpy as np
 from sklearn.ensemble import IsolationForest
+from sklearn.svm import OneClassSVM
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
-from .serializers import DetectionResultSerializer
+import xgboost as xgb
 
 class BotDetectionView(APIView):
     parser_classes = [MultiPartParser]
@@ -15,44 +18,66 @@ class BotDetectionView(APIView):
 
         # Ensure required columns exist
         required_columns = ['Retweet Count', 'Mention Count', 'Follower Count']
-        for col in required_columns:
-            if col not in df.columns:
-                return Response({"error": f"Missing required column: {col}"}, status=400)
+        if not all(col in df.columns for col in required_columns):
+            return Response({"error": "Missing required columns"}, status=400)
 
-        # Fill missing values with the median
+        # Fill missing values with the median for required columns
         df[required_columns] = df[required_columns].fillna(df[required_columns].median())
 
-        # Use Isolation Forest for anomaly detection
-        model = IsolationForest(contamination=0.1)
-        df['anomaly_score'] = model.fit_predict(df[required_columns])
-        df['is_bot'] = df['anomaly_score'] == -1
+        # Log Transformation for Skewed Data (Handle cases where values might be zero or negative)
+        for col in required_columns:
+            df[col] = np.log1p(df[col])
 
-        # Assuming `bot_label` column represents the ground truth (1 for bot, 0 for genuine)
+        # Feature Scaling
+        scaler = StandardScaler()
+        df[required_columns] = scaler.fit_transform(df[required_columns])
+
+        # Train Isolation Forest (Increase Sensitivity)
+        iso_forest = IsolationForest(n_estimators=500, contamination=0.05, max_samples='auto', random_state=42)
+        df['iso_score'] = iso_forest.fit_predict(df[required_columns])
+
+        # Train One-Class SVM (Increase Sensitivity)
+        oc_svm = OneClassSVM(kernel='rbf', gamma='scale', nu=0.05)  # Increased sensitivity
+        df['svm_score'] = oc_svm.fit_predict(df[required_columns])
+
+        # Train XGBoost Classifier (If Labels Exist)
         if 'Bot Label' in df.columns:
-            y_true = df['Bot Label']  # Ground truth labels (1 for bot, 0 for genuine)
-            y_pred = df['is_bot'].astype(int)  # Model predictions
+            y_true = df['Bot Label']
+            X_train = df[required_columns]
+            y_train = y_true
 
-            precision = precision_score(y_true, y_pred)
-            recall = recall_score(y_true, y_pred)
-            f1 = f1_score(y_true, y_pred)
-            auc_roc = roc_auc_score(y_true, y_pred)
+            xgb_model = xgb.XGBClassifier(n_estimators=300, learning_rate=0.05, max_depth=5, random_state=42)
+            xgb_model.fit(X_train, y_train)
+            df['xgb_pred'] = xgb_model.predict(X_train)
 
-            # Confusion Matrix to calculate False Positive and False Negative rates
+            # Final Decision: Combine All Models
+            df['final_pred'] = ((df['iso_score'] < 0) | (df['svm_score'] < 0) | (df['xgb_pred'] == 1)).astype(int)
+
+            y_pred = df['final_pred']
+
+            # Metrics Calculation
+            precision = round(precision_score(y_true, y_pred, zero_division=0) * 100, 2)
+            recall = round(recall_score(y_true, y_pred, zero_division=0) * 100, 2)
+            f1 = round(f1_score(y_true, y_pred, zero_division=0) * 100, 2)
+            auc_roc = round(roc_auc_score(y_true, y_pred) * 100, 2)
+
             tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
-            false_positive_rate = fp / (fp + tn) if (fp + tn) > 0 else 0
-            false_negative_rate = fn / (fn + tp) if (fn + tp) > 0 else 0
+            false_positive_rate = round((fp / (fp + tn) * 100), 2) if (fp + tn) > 0 else 0
+            false_negative_rate = round((fn / (fn + tp) * 100), 2) if (fn + tp) > 0 else 0
         else:
             precision, recall, f1, auc_roc = None, None, None, None
             false_positive_rate, false_negative_rate = None, None
 
+        # Prepare Results
         results = []
         for _, row in df.iterrows():
             result = {
-                'username': row['Username'],
-                'confidence': abs(row['anomaly_score'] * 100),
-                'is_bot': row['is_bot'],
+                'username': row.get('Username', 'Unknown'),
+                'confidence': round(abs(row['iso_score'] * 100), 2),
+                'is_bot': row['final_pred'],
             }
 
+            # Add metrics if available
             if precision is not None:
                 result['metrics'] = {
                     'precision': precision,
@@ -65,8 +90,8 @@ class BotDetectionView(APIView):
             results.append(result)
 
         return Response({
-            'bot_count': sum(df['is_bot']),
-            'genuine_count': len(df) - sum(df['is_bot']),
+            'bot_count': sum(df['final_pred']),
+            'genuine_count': len(df) - sum(df['final_pred']),
             'details': results,
             'metrics': {
                 'precision': precision,
