@@ -1,0 +1,27 @@
+# Frontend Dependencies (React)
+react==19.0.0
+react-dom==19.0.0
+react-scripts==5.0.1
+chart.js==4.4.7
+react-chartjs-2==5.3.0
+axios==1.7.9
+web-vitals==4.2.4
+
+# Development Dependencies
+@babel/plugin-proposal-private-property-in-object==7.21.11
+
+# Backend Dependencies (Django)
+Django==4.2
+djangorestframework==3.14.0
+django-cors-headers==4.2.0
+djangorestframework-simplejwt==5.3.0
+
+# Machine Learning & Data Processing
+scikit-learn==1.2.1
+pandas==1.5.3
+numpy==1.23.5
+torch==1.13.1
+transformers==4.26.1
+joblib==1.2.0
+requests==2.28.2
+
