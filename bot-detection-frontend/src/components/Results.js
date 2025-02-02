@@ -8,7 +8,6 @@ Chart.register(...registerables);
 const Results = ({ data }) => {
   const [filter, setFilter] = useState('all'); // 'all', 'bot', 'genuine'
   const [showMetrics, setShowMetrics] = useState(false); // Show/Hide Metrics
-  const [showDetails, setShowDetails] = useState(false); // Show/Hide Detailed Metrics for each user
 
   const chartData = {
     labels: ['Bots Detected', 'Genuine Users'],
@@ -30,6 +29,11 @@ const Results = ({ data }) => {
 
   return (
     <div>
+      {/* Display Bot Image at the top of the page */}
+      <div className="bot-image-container">
+        <img src="https://png.pngtree.com/thumb_back/fw800/background/20220824/pngtree-cute-blue-robot-giving-thumbs-up-3d-element-raise-man-photo-image_40164478.jpg" alt="Bot" className="bot-image" />
+      </div>
+
       <h2>Detection Results</h2>
 
       {/* Display Evaluation Metrics Toggle */}
@@ -59,34 +63,27 @@ const Results = ({ data }) => {
         <button onClick={() => setFilter('genuine')} className={filter === 'genuine' ? 'active' : ''}>Genuine Users</button>
       </div>
 
-      {/* Toggle for showing detailed user-level metrics */}
+      {/* Directly displaying user-level details */}
       <div>
-        <button onClick={() => setShowDetails(!showDetails)}>
-          {showDetails ? 'Hide' : 'Show'} User-Level Details
-        </button>
+        <h3>Details:</h3>
+        <ul>
+          {filteredDetails.map((detail, index) => (
+            <li key={index} className={detail.is_bot ? 'bot' : 'genuine'}>
+              User: {detail.username} - Confidence: {detail.confidence}% - {detail.is_bot ? 'Bot' : 'Genuine'}
+              {detail.metrics && (
+                <div className="metrics-detail">
+                  <p>Precision: {detail.metrics.precision ? detail.metrics.precision.toFixed(2) : 'N/A'}</p>
+                  <p>Recall: {detail.metrics.recall ? detail.metrics.recall.toFixed(2) : 'N/A'}</p>
+                  <p>F1 Score: {detail.metrics.f1_score ? detail.metrics.f1_score.toFixed(2) : 'N/A'}</p>
+                  <p>AUC-ROC: {detail.metrics.auc_roc ? detail.metrics.auc_roc.toFixed(2) : 'N/A'}</p>
+                  <p>False Positive Rate: {detail.metrics.false_positive_rate ? detail.metrics.false_positive_rate.toFixed(2) : 'N/A'}</p>
+                  <p>False Negative Rate: {detail.metrics.false_negative_rate ? detail.metrics.false_negative_rate.toFixed(2) : 'N/A'}</p>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
       </div>
-      {showDetails && (
-        <div>
-          <h3>Details:</h3>
-          <ul>
-            {filteredDetails.map((detail, index) => (
-              <li key={index} className={detail.is_bot ? 'bot' : 'genuine'}>
-                User: {detail.username} - Confidence: {detail.confidence}% - {detail.is_bot ? 'Bot' : 'Genuine'}
-                {detail.metrics && (
-                  <div className="metrics-detail">
-                    <p>Precision: {detail.metrics.precision ? detail.metrics.precision.toFixed(2) : 'N/A'}</p>
-                    <p>Recall: {detail.metrics.recall ? detail.metrics.recall.toFixed(2) : 'N/A'}</p>
-                    <p>F1 Score: {detail.metrics.f1_score ? detail.metrics.f1_score.toFixed(2) : 'N/A'}</p>
-                    <p>AUC-ROC: {detail.metrics.auc_roc ? detail.metrics.auc_roc.toFixed(2) : 'N/A'}</p>
-                    <p>False Positive Rate: {detail.metrics.false_positive_rate ? detail.metrics.false_positive_rate.toFixed(2) : 'N/A'}</p>
-                    <p>False Negative Rate: {detail.metrics.false_negative_rate ? detail.metrics.false_negative_rate.toFixed(2) : 'N/A'}</p>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 };

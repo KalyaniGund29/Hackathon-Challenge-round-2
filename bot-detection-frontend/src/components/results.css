@@ -1,197 +1,203 @@
-/* Global Styles */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Orbitron', sans-serif;
+/* Overall container styling */
+div {
+  font-family: 'Times New Roman', serif; /* Changed font to Times New Roman */
+  margin: 20px;
+  padding: 30px;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #c2e9fb, #a1c4fd); /* Lavender & light blue gradient */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
-/* Cyberpunk Dark Background */
-body {
-  background: radial-gradient(circle at top left, #0f0c29, #302b63, #24243e);
-  color: #ffffff;
+/* Heading styling */
+h2 {
+  font-size: 34px;
+  font-weight: 600;
+  color: #2c3e50; /* Dark blue */
+  text-align: center;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-style: italic; /* Italicized text */
+}
+
+h3 {
+  font-size: 26px;
+  color: #4e4e4e; /* Dark gray */
+  margin-bottom: 15px;
+  font-weight: 500;
+  font-style: italic; /* Italicized text */
+}
+
+/* Evaluation Metrics section */
+.metrics {
+  background-color: #ffffff;
+  border-radius: 15px;
+  padding: 30px;
+  margin: 30px 0;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.metrics p {
+  font-size: 18px;
+  color: #333;
+  font-style: italic; /* Italicized text */
+}
+
+.metrics h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #100b37; /* Navy blue */
+  text-align: center;
+  margin-bottom: 20px;
+  font-style: italic; /* Italicized text */
+}
+
+/* Button styles */
+button {
+  padding: 12px 24px;
+  margin: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #5a7997; /* Blue */
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  text-transform: uppercase;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 115, 230, 0.2);
+}
+
+button:hover {
+  background-color: #a1bad3; /* Darker blue */
+  transform: translateY(-4px);
+  box-shadow: 0 6px 15px rgba(0, 115, 230, 0.3);
+}
+
+button.active {
+  background-color: #ff4d4d; /* Red for active state */
+  transform: scale(1.05);
+}
+
+button:focus {
+  outline: none;
+}
+
+/* Bar chart container */
+.chart-container {
+  margin: 25px 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  padding: 20px;
 }
 
-/* Container with a Cyberpunk Glass Look */
-.container {
-  width: 90%;
-  max-width: 1100px;
-  padding: 30px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 15px;
-  box-shadow: 0px 0px 20px rgba(0, 255, 255, 0.3);
-  border: 1px solid rgba(0, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  text-align: center;
-  transition: all 0.3s ease-in-out;
+/* Filter and User-Level Details button container */
+div > button {
+  margin: 0 15px;
 }
 
-.container:hover {
-  box-shadow: 0px 0px 30px rgba(0, 255, 255, 0.5);
-}
-
-/* Glowing Title */
-h2 {
-  font-size: 2.5rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  text-shadow: 0px 0px 10px cyan;
-  margin-bottom: 20px;
-}
-
-/* Metric Section */
-.metrics {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  padding: 20px;
-}
-
-/* Metric Cards */
-.metric-card {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  border-radius: 12px;
-  text-align: center;
-  width: 45%;
-  min-width: 260px;
-  border: 1px solid rgba(0, 255, 255, 0.3);
-  box-shadow: 0 4px 10px rgba(0, 255, 255, 0.2);
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Glowing Hover Effect */
-.metric-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0px 0px 20px rgba(0, 255, 255, 0.6);
-}
-
-/* Metric Card Text */
-.metric-card p {
-  font-size: 1.2rem;
-  color: #dfe6e9;
-  font-weight: 500;
-}
-
-/* Animated Borders */
-.metric-card::before {
-  content: "";
-  position: absolute;
-  top: -3px;
-  left: -3px;
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
-  border: 3px solid transparent;
-  background: linear-gradient(45deg, cyan, magenta, lime, cyan);
-  background-clip: border-box;
-  mask: linear-gradient(white 0 0) padding-box, linear-gradient(white 0 0);
-  mask-composite: exclude;
-  transition: 0.5s;
-}
-
-.metric-card:hover::before {
-  transform: rotate(180deg);
-}
-
-/* Cyberpunk Buttons */
-button {
-  padding: 12px 30px;
-  font-size: 1rem;
-  font-weight: bold;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  display: inline-block;
-  margin-top: 20px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: all 0.3s ease-in-out;
-}
-
-button.primary {
-  background: linear-gradient(45deg, #ff007f, #ff00ff);
-  color: white;
-  box-shadow: 0px 4px 10px rgba(255, 0, 127, 0.6);
-}
-
-button.primary:hover {
-  background: linear-gradient(45deg, #ff00ff, #ff007f);
-  transform: scale(1.1);
-  box-shadow: 0px 6px 15px rgba(255, 0, 127, 0.8);
-}
-
-/* Secondary Button */
-button.secondary {
-  background: linear-gradient(45deg, #00ffcc, #00ff99);
-  color: black;
-  box-shadow: 0px 4px 10px rgba(0, 255, 204, 0.6);
-}
-
-button.secondary:hover {
-  background: linear-gradient(45deg, #00ff99, #00ffcc);
-  transform: scale(1.1);
-  box-shadow: 0px 6px 15px rgba(0, 255, 204, 0.8);
-}
-
-/* Smooth List Effects */
+/* User-level details section */
 ul {
-  list-style: none;
-  padding: 0;
+  list-style-type: none;
+  padding-left: 0;
 }
 
 ul li {
-  background: rgba(255, 255, 255, 0.1);
-  margin: 10px 0;
-  padding: 15px;
-  border-radius: 10px;
-  font-size: 1.1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-}
-
-ul li:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(255, 255, 255, 0.2);
+  background-color: #ffffff;
+  margin-bottom: 20px;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease-in-out;
+  font-style: italic; /* Italicized text */
 }
 
 ul li.bot {
-  background: rgba(255, 0, 127, 0.2);
-  border-left: 5px solid #ff007f;
+  background-color: #fddede; /* Light red for bot */
+  border-left: 5px solid #ff4d4d;
+  color: #ff4d4d;
 }
 
 ul li.genuine {
-  background: rgba(0, 255, 153, 0.2);
-  border-left: 5px solid #00ff99;
+  background-color: #e9f7ef; /* Light green for genuine */
+  border-left: 5px solid #2f5550;
+  color: #34b7a4;
 }
 
-/* Responsive Design */
+ul li:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Metrics details section */
+.metrics-detail {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.metrics-detail p {
+  margin: 8px 0;
+  font-style: italic; /* Italicized text */
+}
+
+/* Toggle visibility for additional details */
+div button {
+  display: inline-block;
+  margin-right: 25px;
+}
+
+/* Gradient background for even more color */
+body {
+  background: linear-gradient(135deg, #10124b, #3f94cc); /* Purple to Lavender gradient */
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+  color: #333; /* Text color for overall readability */
+  font-size: 16px;
+  line-height: 1.6; /* Improved text readability */
+  font-family: 'Times New Roman', serif; /* Updated font to Times New Roman */
+}
+
+/* Bot image styling */
+.bot-image-container {
+  text-align: center; /* Center the bot image */
+  margin-bottom: 30px; /* Space below the image */
+}
+
+.bot-image {
+  width: 100px; /* Adjust the size of the bot image */
+  height: 100px;
+  border-radius: 50%; /* Make the image circular */
+  object-fit: cover; /* Ensure the image fits well inside the circle */
+  box-shadow: none; /* No shadow for the image */
+  background: none; /* No background color for the image */
+}
+
+/* Overall layout */
 @media (max-width: 768px) {
-  .metrics {
-    flex-direction: column;
-    align-items: center;
+  h2 {
+    font-size: 28px;
   }
 
-  .metric-card {
-    width: 100%;
+  h3 {
+    font-size: 22px;
+  }
+
+  .metrics p {
+    font-size: 16px;
   }
 
   button {
-    width: 100%;
+    font-size: 16px;
+    padding: 10px 18px;
   }
 
-  h2 {
-    font-size: 2rem;
+  ul li {
+    font-size: 16px;
+    padding: 18px;
   }
 }
